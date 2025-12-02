@@ -3,6 +3,7 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent
 
 DATA_DIR = ROOT_DIR / "data"
+PLOTS_DIR = ROOT_DIR / "plots"
 
 NYPD_KAGGLE_ID = "brunacmendes/nypd-complaint-data-historic-20062019"
 AIRBNB_KAGGLE_ID = "dgomonov/new-york-city-airbnb-open-data"

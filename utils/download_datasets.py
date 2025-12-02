@@ -36,7 +36,7 @@ def download_from_kaggle(dataset_id: str, output_path: Path) -> None:
     source_csv = csv_files[0]
     shutil.copy(source_csv, output_path)
 
-    print(f"Saved dataset to: {output_path.relative_to(ROOT_DIR)} " f"(source: {source_csv.name})")
+    print(f"Saved dataset to: {output_path.relative_to(ROOT_DIR)} (source: {source_csv.name})")
 
 
 def main() -> None:
