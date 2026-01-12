@@ -27,9 +27,14 @@ def main() -> None:
     if "law_category" in df.columns:
         print(df["law_category"].value_counts())
 
-    print("\n--- Top 10 offense types ---")
+    print("\n--- Top 30 offense types ---")
     if "offense_description" in df.columns:
-        print(df["offense_description"].value_counts().head(10))
+        top = df["offense_description"].value_counts().head(30)
+        print(top)
+
+        # opcjonalnie: zapisz do pliku, żeby było pod ręką w repo
+        top.to_csv("plots/top30_offense_description.csv", header=["count"])
+        print("Saved: plots/top30_offense_description.csv")
 
 
 if __name__ == "__main__":

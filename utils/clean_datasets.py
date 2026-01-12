@@ -99,6 +99,9 @@ def clean_nypd() -> None:
         "Longitude": "longitude",
     }
     df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+    df["law_category"] = df["law_category"].astype(str).str.upper().str.strip()
+    df["offense_description"] = df["offense_description"].astype(str).str.upper().str.strip()
+    df["borough"] = df["borough"].astype(str).str.upper().str.strip()
 
     # Drop rows where key descriptive columns are missing
     df = drop_missing_required(
@@ -108,6 +111,9 @@ def clean_nypd() -> None:
 
     # Filter coordinates that are clearly outside NYC bounds (rough filter)
     df = df[df["latitude"].between(NYC_LAT_MIN, NYC_LAT_MAX) & df["longitude"].between(NYC_LON_MIN, NYC_LON_MAX)]
+
+    # Drop rows where parsing failed (NaT)
+    df = df.dropna(subset=["complaint_date"])
 
     # Parse complaint_date as datetime
     df["complaint_date"] = pd.to_datetime(df["complaint_date"], errors="coerce")
