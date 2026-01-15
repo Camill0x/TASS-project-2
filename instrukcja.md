@@ -33,7 +33,7 @@ python -m features.make_model_ready
 
 ## 2. Kategorie przestępstw
 
-Wyświetla w konsoli top 30 kategorii przestępstw (`offense_description`)  
+Wyświetla w konsoli top 30 kategorii przestępstw (`offense_description`)
 oraz zapisuje listę do pliku:
 
 - `plots/top30_offense_description.csv`
@@ -124,7 +124,9 @@ znajduje się w pliku i zostało zrobione na podstawie powyższej listy:
 
 ## 3. Łączenie przestrzenne danych
 
-Tworzy główny zbiór cech przestrzennych:
+### 3.1. Agregacja przestępstw w promieniu od ofert Airbnb
+
+Tworzy główny zbiór cech przestrzennych opartych o promień od każdej oferty airbnb:
 
 - `data/merged_features.csv`
 
@@ -135,6 +137,20 @@ python -m features.build_features_radius
 ```
 
 (Czas wykonania: ok. 5 minut)
+
+---
+
+### 3.2. Agregacja danych w komórkach siatki przestrzennej
+
+Tworzy zbiór zagregowanych danych przestrzennych opartych o regularną siatkę:
+
+- `data/grid_counts_400m.csv` (rozmiar komórki: 400 m)
+
+Zawiera liczbę ofert Airbnb oraz przestępstw NYPD (z podziałem na kategorie) w każdej komórce siatki.
+
+```
+python -m features.build_features_grid_counts
+```
 
 ---
 
@@ -236,10 +252,9 @@ Saved: plots\5-statistical\boxplot_price_by_zone_violent.png
 Saved: plots\5-statistical\boxplot_logprice_by_zone_violent.png
 Saved: plots\5-statistical\boxplot_price_by_zone_felony.png
 Saved: plots\5-statistical\boxplot_logprice_by_zone_felony.png
-Saved: plots\5-statistical\scatter_logprice_vs_violent_400m.png
-Saved: plots\5-statistical\scatter_logprice_vs_felonies_400m.png
-Saved: plots\5-statistical\scatter_logprice_vs_crimes_total_400m.png
-Saved: plots\5-statistical\scatter_price_vs_violent_400m.png
+Saved: plots/5-statistical/hexbin_logprice_vs_crimes_total_400m.png
+Saved: plots/5-statistical/hexbin_logprice_vs_violent_400m.png
+Saved: plots/5-statistical/hexbin_logprice_vs_felonies_400m.png
 Saved: data\correlations.csv
 Saved: plots\5-statistical\corr_heatmap_400m.png
 Saved: data\correlations_by_room_type_400m.csv
@@ -272,14 +287,42 @@ Reading: data\airbnb_clean.csv
 Reading: data\nypd_clean.csv
 Saved: data\borough_join_summary.csv
          borough  listings   avg_price  median_price  crimes_total  felonies  misdemeanors  violations  violent  property
-2      Manhattan     21661  196.875814         150.0        230467     72050        128594       29823    40972     98619
-1       Brooklyn     20104  124.383207          90.0        268702     87381        139528       41793    55962     85381
-3         Queens      5666   99.517649          75.0        182585     57720         94791       30074    38952     59144
-0          Bronx      1091   87.496792          65.0        201339     55202        112821       33316    51127     52147
-4  Staten Island       373  114.812332          75.0         39789      9426         21704        8659     6687      9778
+1       Brooklyn     13141  121.311240          95.0        268702     87381        139528       41793    55962     85381
+2      Manhattan     12952  181.610176         145.0        230467     72050        128594       29823    40972     98619
+3         Queens      4046   93.221948          70.0        182585     57720         94791       30074    38952     59144
+0          Bronx       817   79.542228          65.0        201339     55202        112821       33316    51127     52147
+4  Staten Island       303   86.828383          72.0         39789      9426         21704        8659     6687      9778
 Saved: plots\5-statistical\borough_airbnb_listings.png
 Saved: plots\5-statistical\borough_crimes_total.png
 ```
+
+### 5B. Wizualizacja agregacji w siatce przestrzennej (grid-based)
+
+Analiza rozkładów i zależności pomiędzy liczbą ofert Airbnb a liczbą przestępstw NYPD
+zagregowanych w regularnej siatce przestrzennej.
+
+Skrypt operuje na pliku:
+
+- `data/grid_counts_{DEFAULT_RADIUS_M}m.csv`
+
+i tworzy wykresy eksploracyjne zapisane w:
+
+- `plots/5-statistical/`
+
+W szczególności generowane są:
+- **hexbin (log–log)**: zależność `airbnb_count` vs `nypd_count` (gęstość komórek),
+- **boxploty (log)**: rozkład liczby przestępstw NYPD w grupach komórek
+  z różną liczbą ofert Airbnb.
+
+```
+python -m analysis.grid_count_visualizations
+```
+
+Tworzy:
+- `hexbin_airbnb_vs_nypd_loglog_{R}m.png`
+- `boxplot_nypd_by_airbnb_bins_{R}m.png`
+
+---
 
 ### Modele regresji
 
@@ -305,31 +348,31 @@ Reading: data\merged_model_400m.csv
 Running model: Model_A_basic
                             OLS Regression Results
 ==============================================================================
-Dep. Variable:              log_price   R-squared:                       0.480
-Model:                            OLS   Adj. R-squared:                  0.480
-Method:                 Least Squares   F-statistic:                     6417.
-Date:                Mon, 12 Jan 2026   Prob (F-statistic):               0.00
-Time:                        12:24:43   Log-Likelihood:                -33038.
-No. Observations:               48645   AIC:                         6.609e+04
-Df Residuals:                   48637   BIC:                         6.616e+04
+Dep. Variable:              log_price   R-squared:                       0.511
+Model:                            OLS   Adj. R-squared:                  0.511
+Method:                 Least Squares   F-statistic:                     4650.
+Date:                Thu, 15 Jan 2026   Prob (F-statistic):               0.00
+Time:                        19:49:02   Log-Likelihood:                -19444.
+No. Observations:               31177   AIC:                         3.890e+04
+Df Residuals:                   31169   BIC:                         3.897e+04
 Df Model:                           7
 Covariance Type:            nonrobust
 =============================================================================================
                                 coef    std err          t      P>|t|      [0.025      0.975]
 ---------------------------------------------------------------------------------------------
-Intercept                     4.7455      0.015    310.642      0.000       4.716       4.775
-borough[T.Brooklyn]           0.2101      0.015     14.111      0.000       0.181       0.239
-borough[T.Manhattan]          0.5007      0.015     33.132      0.000       0.471       0.530
-borough[T.Queens]             0.1156      0.016      7.245      0.000       0.084       0.147
-borough[T.Staten Island]      0.0300      0.029      1.040      0.298      -0.027       0.087
-room_type[T.Private room]    -0.7648      0.004   -171.526      0.000      -0.774      -0.756
-room_type[T.Shared room]     -1.1121      0.014    -77.322      0.000      -1.140      -1.084
-crimes_total_400m          1.848e-05   2.57e-06      7.196      0.000    1.34e-05    2.35e-05
+Intercept                     4.6940      0.017    278.819      0.000       4.661       4.727
+borough[T.Brooklyn]           0.2556      0.016     15.651      0.000       0.224       0.288
+borough[T.Manhattan]          0.5309      0.017     31.770      0.000       0.498       0.564
+borough[T.Queens]             0.1478      0.018      8.427      0.000       0.113       0.182
+borough[T.Staten Island]      0.0209      0.031      0.684      0.494      -0.039       0.081
+room_type[T.Private room]    -0.7690      0.005   -146.416      0.000      -0.779      -0.759
+room_type[T.Shared room]     -1.2082      0.017    -70.045      0.000      -1.242      -1.174
+crimes_total_400m          2.298e-05   3.12e-06      7.378      0.000    1.69e-05    2.91e-05
 ==============================================================================
-Omnibus:                     5964.999   Durbin-Watson:                   1.876
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):            13275.858
-Skew:                           0.744   Prob(JB):                         0.00
-Kurtosis:                       5.082   Cond. No.                     3.52e+04
+Omnibus:                     2970.616   Durbin-Watson:                   1.906
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             6154.093
+Skew:                           0.620   Prob(JB):                         0.00
+Kurtosis:                       4.789   Cond. No.                     3.19e+04
 ==============================================================================
 
 Notes:
@@ -340,34 +383,34 @@ strong multicollinearity or other numerical problems.
 Running model: Model_B_extended
                             OLS Regression Results
 ==============================================================================
-Dep. Variable:              log_price   R-squared:                       0.510
-Model:                            OLS   Adj. R-squared:                  0.510
-Method:                 Least Squares   F-statistic:                     5069.
-Date:                Mon, 12 Jan 2026   Prob (F-statistic):               0.00
-Time:                        12:24:43   Log-Likelihood:                -31581.
-No. Observations:               48645   AIC:                         6.318e+04
-Df Residuals:                   48634   BIC:                         6.328e+04
+Dep. Variable:              log_price   R-squared:                       0.536
+Model:                            OLS   Adj. R-squared:                  0.536
+Method:                 Least Squares   F-statistic:                     3603.
+Date:                Thu, 15 Jan 2026   Prob (F-statistic):               0.00
+Time:                        19:49:02   Log-Likelihood:                -18613.
+No. Observations:               31177   AIC:                         3.725e+04
+Df Residuals:                   31166   BIC:                         3.734e+04
 Df Model:                          10
 Covariance Type:            nonrobust
 =============================================================================================
                                 coef    std err          t      P>|t|      [0.025      0.975]
 ---------------------------------------------------------------------------------------------
-Intercept                     4.7236      0.015    312.981      0.000       4.694       4.753
-borough[T.Brooklyn]           0.1610      0.015     10.997      0.000       0.132       0.190
-borough[T.Manhattan]          0.4231      0.015     28.338      0.000       0.394       0.452
-borough[T.Queens]             0.0587      0.016      3.771      0.000       0.028       0.089
-borough[T.Staten Island]     -0.0500      0.028     -1.784      0.074      -0.105       0.005
-room_type[T.Private room]    -0.7369      0.004   -168.346      0.000      -0.745      -0.728
-room_type[T.Shared room]     -1.1152      0.014    -79.621      0.000      -1.143      -1.088
-felonies_400m                 0.0004   1.15e-05     37.524      0.000       0.000       0.000
-violent_400m                 -0.0006   1.55e-05    -37.566      0.000      -0.001      -0.001
-number_of_reviews            -0.0005   4.79e-05    -11.092      0.000      -0.001      -0.000
-availability_365              0.0006   1.64e-05     36.724      0.000       0.001       0.001
+Intercept                     4.6709      0.017    278.461      0.000       4.638       4.704
+borough[T.Brooklyn]           0.2048      0.016     12.706      0.000       0.173       0.236
+borough[T.Manhattan]          0.4631      0.017     27.941      0.000       0.431       0.496
+borough[T.Queens]             0.0930      0.017      5.417      0.000       0.059       0.127
+borough[T.Staten Island]     -0.0524      0.030     -1.755      0.079      -0.111       0.006
+room_type[T.Private room]    -0.7468      0.005   -144.425      0.000      -0.757      -0.737
+room_type[T.Shared room]     -1.2108      0.017    -71.819      0.000      -1.244      -1.178
+felonies_400m                 0.0004   1.38e-05     29.474      0.000       0.000       0.000
+violent_400m                 -0.0005   1.82e-05    -28.763      0.000      -0.001      -0.000
+number_of_reviews            -0.0003   4.86e-05     -7.017      0.000      -0.000      -0.000
+availability_365              0.0005   1.97e-05     27.380      0.000       0.000       0.001
 ==============================================================================
-Omnibus:                     5740.127   Durbin-Watson:                   1.892
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):            13016.009
-Skew:                           0.714   Prob(JB):                         0.00
-Kurtosis:                       5.093   Cond. No.                     1.33e+04
+Omnibus:                     2787.129   Durbin-Watson:                   1.907
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             5842.736
+Skew:                           0.584   Prob(JB):                         0.00
+Kurtosis:                       4.771   Cond. No.                     1.21e+04
 ==============================================================================
 
 Notes:
@@ -417,25 +460,25 @@ Przykład
 ```
 python -m network.network_metrics
 Reading graph: data\bipartite_airbnb_hotspot.graphml
-Listings: 48645, Hotspots: 3097
-Hotspot projection: 3097 nodes, 5052 edges
-Saved projection graph: data\hotspot_projection.graphml
-Saved: data\network_global_stats.csv
-{'nodes': 3097, 'edges': 5052, 'connected_components': 894, 'largest_component_nodes': 1793, 'largest_component_edges': 4427, 'density': 0.0010537829807790986, 'avg_clustering': 0.4419103391496047}
-Saved: data\hotspot_centrality.csv
+Listings: 31177, Hotspots: 3097
+Hotspot projection: 3097 nodes, 4527 edges
+Saved projection graph: data/hotspot_projection.graphml
+Saved: data/network_global_stats.csv
+{'nodes': 3097, 'edges': 4527, 'connected_components': 1026, 'largest_component_nodes': 1621, 'largest_component_edges': 3869, 'density': 0.000944274654391722, 'avg_clustering': 0.4395082400634529}
+Saved: data/hotspot_centrality.csv
 
 Top 10 hotspots by PageRank:
                           hotspot  degree_centrality  pagerank  strength_weighted_degree  betweenness_lcc
-1110             H_40.665_-73.765           0.002584  0.001086                      48.0         0.018409
-2924             H_40.865_-73.925           0.002584  0.001030                     184.0         0.015422
-800               H_40.635_-74.08           0.002584  0.001006                      42.0         0.000000
-2254              H_40.765_-73.99           0.002584  0.001001                    1030.0         0.005647
-2041               H_40.74_-73.79           0.001938  0.000998                      23.0         0.007790
-2253             H_40.765_-73.985           0.002584  0.000994                     941.0         0.006211
-411   H_40.595_-74.08500000000001           0.001938  0.000987                      27.0         0.000000
-742                H_40.62_-74.03           0.002261  0.000983                      40.0         0.001684
-1953             H_40.735_-73.955           0.002584  0.000971                     369.0         0.136286
-1612              H_40.705_-74.01           0.001938  0.000967                     542.0         0.000047
+2254              H_40.765_-73.99           0.002584  0.001210                     719.0         0.007579
+1612              H_40.705_-74.01           0.001938  0.001195                     382.0         0.000965
+1110             H_40.665_-73.765           0.002584  0.001191                      48.0         0.012063
+800               H_40.635_-74.08           0.002261  0.001168                      39.0         0.000000
+742                H_40.62_-74.03           0.002261  0.001108                      36.0         0.001863
+345    H_40.58_-73.96000000000001           0.001938  0.001064                      36.0         0.002462
+2924             H_40.865_-73.925           0.002584  0.001041                     120.0         0.003170
+411   H_40.595_-74.08500000000001           0.001938  0.001033                      25.0         0.000000
+1304             H_40.685_-73.875           0.002584  0.001011                      49.0         0.101017
+1953             H_40.735_-73.955           0.002584  0.001007                     202.0         0.142355
 ```
 
 ### Community detection
@@ -457,9 +500,9 @@ Przykład
 ```
 python -m network.community_detection
 Reading projection graph: data\hotspot_projection.graphml
-LCC: 1793 nodes, 4427 edges
-Detected communities: 31
-Modularity (LCC): 0.8806
+LCC: 1621 nodes, 3869 edges
+Detected communities: 32
+Modularity (LCC): 0.8868
 Saved: data\hotspot_communities.csv
 Saved: data\community_stats.csv
 ```
@@ -497,6 +540,7 @@ Przykład
 
 ```
 python -m network.community_map
+Saved: plots/6-network/community_map.html
 ```
 
 ---
