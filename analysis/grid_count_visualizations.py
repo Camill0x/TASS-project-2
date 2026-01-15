@@ -63,12 +63,11 @@ def save_boxplot_by_bins(
     data = []
     for b in order:
         vals = df.loc[bins == b, target_col].dropna().to_numpy(dtype=float)
-        vals = np.log1p(vals)
         data.append(vals)
 
     plt.boxplot(data, tick_labels=order, showfliers=False)
     plt.xlabel(f"{airbnb_col} bin")
-    plt.ylabel(f"log({target_col})")
+    plt.ylabel(target_col)
     plt.title(title)
 
     out = PLOTS_DIR / "5-statistical" / filename
