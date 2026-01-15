@@ -1,3 +1,9 @@
+contextily==1.7.0
+folium==0.20.0
+geopandas==1.1.2
 kagglehub==0.3.13
 matplotlib==3.10.7
+networkx==3.6.1
 pandas==2.3.3
+scikit-learn==1.8.0
+statsmodels==0.14.6
