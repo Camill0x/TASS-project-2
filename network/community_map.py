@@ -81,6 +81,23 @@ def main() -> None:
 
     folium.LayerControl(collapsed=False).add_to(m)
 
+    button_html = """
+    <button onclick="
+        var b=document.querySelectorAll('.leaflet-control-layers-overlays input');
+        var on=[...b].some(x=>!x.checked);
+        b.forEach(x=>{ if(x.checked!==on) x.click(); });
+    "
+    style="
+        position:fixed;bottom:30px;right:12px;z-index:9999;
+        background:white;padding:8px 10px;border:1px solid #ccc;
+        border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.15);
+    ">
+    Zaznacz / odznacz wszystkie
+    </button>
+    """
+
+    m.get_root().html.add_child(folium.Element(button_html))
+
     legend_html = """
     <div style="
         position: fixed;
