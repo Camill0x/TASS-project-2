@@ -67,6 +67,9 @@ def clean_airbnb() -> None:
     # Parse last_review as datetime
     df["last_review"] = pd.to_datetime(df["last_review"], errors="coerce")
 
+    # Drop listings with last_review < 2018 or without any reviews
+    df = df[df["last_review"] >= "2018-01-01"]
+
     df.to_csv(AIRBNB_CLEAN, index=False)
 
     print(f"Saved cleaned Airbnb data to: {AIRBNB_CLEAN.relative_to(ROOT_DIR)}")
@@ -99,9 +102,13 @@ def clean_nypd() -> None:
         "Longitude": "longitude",
     }
     df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+    df["complaint_date"] = pd.to_datetime(df["complaint_date"], errors="coerce")
     df["law_category"] = df["law_category"].astype(str).str.upper().str.strip()
     df["offense_description"] = df["offense_description"].astype(str).str.upper().str.strip()
     df["borough"] = df["borough"].astype(str).str.upper().str.strip()
+
+    # Replace string "NAN" with real missing values
+    df = df.replace("NAN", pd.NA)
 
     # Drop rows where key descriptive columns are missing
     df = drop_missing_required(
@@ -109,17 +116,11 @@ def clean_nypd() -> None:
         ["complaint_date", "borough", "law_category", "offense_description", "latitude", "longitude"],
     )
 
-    # Filter coordinates that are clearly outside NYC bounds (rough filter)
-    df = df[df["latitude"].between(NYC_LAT_MIN, NYC_LAT_MAX) & df["longitude"].between(NYC_LON_MIN, NYC_LON_MAX)]
-
-    # Drop rows where parsing failed (NaT)
-    df = df.dropna(subset=["complaint_date"])
-
-    # Parse complaint_date as datetime
-    df["complaint_date"] = pd.to_datetime(df["complaint_date"], errors="coerce")
-
     # Keep only 2018–2019
     df = df[df["complaint_date"].dt.year.isin([2018, 2019])]
+
+    # Filter coordinates that are clearly outside NYC bounds (rough filter)
+    df = df[df["latitude"].between(NYC_LAT_MIN, NYC_LAT_MAX) & df["longitude"].between(NYC_LON_MIN, NYC_LON_MAX)]
 
     df.to_csv(NYPD_CLEAN, index=False)
 
