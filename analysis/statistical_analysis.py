@@ -38,22 +38,23 @@ def save_boxplot(df: pd.DataFrame, y: str, zone_col: str, title: str, filename: 
     print(f"Saved: {out.relative_to(ROOT_DIR)}")
 
 
-def save_scatter(
+def save_hexbin(
     df: pd.DataFrame,
     x: str,
     y: str,
     title: str,
     filename: str,
-    sample: int = 20000,
+    gridsize: int = 55,
 ) -> None:
-    plt.figure(figsize=(7, 5))
+    """Hexbin density plot on log-log scale."""
     d = df[[x, y]].dropna()
-    if len(d) > sample:
-        d = d.sample(sample, random_state=42)
-    plt.scatter(d[x], d[y], s=6, alpha=0.35)
+
+    hb = plt.hexbin(d[x], d[y], gridsize=gridsize, bins="log")
     plt.xlabel(x)
     plt.ylabel(y)
     plt.title(title)
+    plt.colorbar(hb, label="log(cell count)")
+
     out = PLOTS_DIR / "5-statistical" / filename
     plt.tight_layout()
     plt.savefig(out, dpi=200)
@@ -225,11 +226,10 @@ def main() -> None:
         "boxplot_logprice_by_zone_felony.png",
     )
 
-    # --- scatter: price/log_price vs crimes ---
-    save_scatter(df, violent_col, "log_price", f"log_price vs {violent_col}", f"scatter_logprice_vs_{violent_col}.png")
-    save_scatter(df, fel_col, "log_price", f"log_price vs {fel_col}", f"scatter_logprice_vs_{fel_col}.png")
-    save_scatter(df, tot_col, "log_price", f"log_price vs {tot_col}", f"scatter_logprice_vs_{tot_col}.png")
-    save_scatter(df, violent_col, "price", f"price vs {violent_col}", f"scatter_price_vs_{violent_col}.png")
+    # --- hexbin: price/log_price vs crimes ---
+    save_hexbin(df, tot_col, "log_price", f"log_price vs {tot_col}", f"hexbin_logprice_vs_{tot_col}.png")
+    save_hexbin(df, violent_col, "log_price", f"log_price vs {violent_col}", f"hexbin_logprice_vs_{violent_col}.png")
+    save_hexbin(df, fel_col, "log_price", f"log_price vs {fel_col}", f"hexbin_logprice_vs_{fel_col}.png")
 
     # --- correlations table ---
     corr_cols = [
