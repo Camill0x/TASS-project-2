@@ -33,9 +33,7 @@ def main() -> None:
         for node in c:
             mapping[node] = i
 
-    df = pd.DataFrame(
-        [{"hotspot": n, "community_id": mapping.get(n, -1)} for n in H.nodes()]
-    )
+    df = pd.DataFrame([{"hotspot": n, "community_id": mapping.get(n, -1)} for n in H.nodes()])
 
     out = DATA_DIR / "hotspot_communities.csv"
     df.to_csv(out, index=False)

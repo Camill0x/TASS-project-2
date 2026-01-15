@@ -1,16 +1,13 @@
-import geopandas as gpd
 import contextily as ctx
+import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from config import AIRBNB_CLEAN
-from config import NYPD_CLEAN
+from config import AIRBNB_CLEAN, NYPD_CLEAN
 
 df = pd.read_csv(NYPD_CLEAN)
 
-gdf = gpd.GeoDataFrame(
-    df, geometry=gpd.points_from_xy(df.longitude, df.latitude), crs="EPSG:4326"
-).to_crs(epsg=3857)
+gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude), crs="EPSG:4326").to_crs(epsg=3857)
 
 fig, ax = plt.subplots(figsize=(8, 8))
 hb = ax.hexbin(

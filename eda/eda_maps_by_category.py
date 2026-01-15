@@ -1,6 +1,6 @@
 import folium
-from folium.plugins import HeatMap
 import pandas as pd
+from folium.plugins import HeatMap
 
 from config import AIRBNB_CLEAN, NYPD_CLEAN
 

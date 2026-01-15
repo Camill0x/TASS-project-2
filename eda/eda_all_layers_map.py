@@ -1,7 +1,7 @@
 import folium
+import pandas as pd
 from folium import FeatureGroup
 from folium.plugins import HeatMap
-import pandas as pd
 
 from config import AIRBNB_CLEAN, NYPD_CLEAN
 
@@ -91,7 +91,6 @@ def main():
             1.0: "#99000d",
         },
     )
-
 
     # Layer control
     folium.LayerControl(collapsed=False).add_to(m)

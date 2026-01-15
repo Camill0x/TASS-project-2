@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from config import NYPD_CLEAN, DATA_DIR, ROOT_DIR
+from config import DATA_DIR, NYPD_CLEAN, ROOT_DIR
 from features.crime_taxonomy import add_offense_group
-
 
 GRID_SIZE = 0.005  # ~500 m
 

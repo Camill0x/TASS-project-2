@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
-from config import DATA_DIR, PLOTS_DIR, ROOT_DIR, DEFAULT_RADIUS_M
+from config import DATA_DIR, DEFAULT_RADIUS_M, PLOTS_DIR, ROOT_DIR
 
 
 def add_crime_zone(df: pd.DataFrame, col: str, out_col: str) -> pd.DataFrame:
@@ -168,8 +168,8 @@ def main() -> None:
     # --- modelling convenience / "standard mieszkania" ---
     df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
     df = df[df["price"].notna()]
-    df = df[df["price"] >= 10]              # drop degenerate
-    df = df[df["price"] <= 1000]            # cut outliers for stats/models
+    df = df[df["price"] >= 10]  # drop degenerate
+    df = df[df["price"] <= 1000]  # cut outliers for stats/models
     df["log_price"] = np.log1p(df["price"])
 
     # --- radius-dependent columns ---
@@ -202,12 +202,28 @@ def main() -> None:
     print(zs_f)
 
     # --- boxplots (violent zones) ---
-    save_boxplot(df, "price", "crime_zone_violent", f"Price by violent-crime zone (R={R}m)", "boxplot_price_by_zone_violent.png")
-    save_boxplot(df, "log_price", "crime_zone_violent", f"Log(price) by violent-crime zone (R={R}m)", "boxplot_logprice_by_zone_violent.png")
+    save_boxplot(
+        df, "price", "crime_zone_violent", f"Price by violent-crime zone (R={R}m)", "boxplot_price_by_zone_violent.png"
+    )
+    save_boxplot(
+        df,
+        "log_price",
+        "crime_zone_violent",
+        f"Log(price) by violent-crime zone (R={R}m)",
+        "boxplot_logprice_by_zone_violent.png",
+    )
 
     # --- boxplots (felony zones) ---
-    save_boxplot(df, "price", "crime_zone_felony", f"Price by felony-crime zone (R={R}m)", "boxplot_price_by_zone_felony.png")
-    save_boxplot(df, "log_price", "crime_zone_felony", f"Log(price) by felony-crime zone (R={R}m)", "boxplot_logprice_by_zone_felony.png")
+    save_boxplot(
+        df, "price", "crime_zone_felony", f"Price by felony-crime zone (R={R}m)", "boxplot_price_by_zone_felony.png"
+    )
+    save_boxplot(
+        df,
+        "log_price",
+        "crime_zone_felony",
+        f"Log(price) by felony-crime zone (R={R}m)",
+        "boxplot_logprice_by_zone_felony.png",
+    )
 
     # --- scatter: price/log_price vs crimes ---
     save_scatter(df, violent_col, "log_price", f"log_price vs {violent_col}", f"scatter_logprice_vs_{violent_col}.png")

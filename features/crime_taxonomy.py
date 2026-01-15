@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-
 # Minimalna taksonomia – można rozszerzać
 VIOLENT = {
     "ROBBERY",

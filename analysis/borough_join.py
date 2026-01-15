@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
 
-from config import AIRBNB_CLEAN, NYPD_CLEAN, DATA_DIR, PLOTS_DIR, ROOT_DIR
+from config import AIRBNB_CLEAN, DATA_DIR, NYPD_CLEAN, PLOTS_DIR, ROOT_DIR
 from features.crime_taxonomy import add_offense_group
-
 
 BOROUGH_MAP = {
     "MANHATTAN": "Manhattan",
@@ -28,9 +27,7 @@ def main() -> None:
     # Airbnb counts
     airbnb_b = (
         airbnb.groupby("neighbourhood_group")
-        .agg(listings=("id", "count"),
-             avg_price=("price", "mean"),
-             median_price=("price", "median"))
+        .agg(listings=("id", "count"), avg_price=("price", "mean"), median_price=("price", "median"))
         .reset_index()
         .rename(columns={"neighbourhood_group": "borough"})
     )

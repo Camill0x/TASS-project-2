@@ -6,7 +6,6 @@ import pandas as pd
 
 from config import DATA_DIR, PLOTS_DIR, ROOT_DIR
 
-
 TOP_N = 250  # sensowny rozmiar do rysowania
 
 

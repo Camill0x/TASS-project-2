@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import networkx as nx
 import numpy as np
 import pandas as pd
-import networkx as nx
 from sklearn.neighbors import BallTree
 
-from config import DATA_DIR, ROOT_DIR
-from config import DEFAULT_RADIUS_M
+from config import DATA_DIR, DEFAULT_RADIUS_M, ROOT_DIR
+
 RADIUS_M = float(DEFAULT_RADIUS_M)
 
 EARTH_RADIUS_M = 6371000.0

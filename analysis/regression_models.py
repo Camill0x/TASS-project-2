@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 import statsmodels.formula.api as smf
-from config import DEFAULT_RADIUS_M
-from config import DATA_DIR, ROOT_DIR
+
+from config import DATA_DIR, DEFAULT_RADIUS_M, ROOT_DIR
 
 
 def run_model(formula: str, df: pd.DataFrame, name: str) -> pd.DataFrame:
