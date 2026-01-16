@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent
@@ -18,4 +19,4 @@ NYC_LAT_MIN, NYC_LAT_MAX = 40.49, 40.92
 NYC_LON_MIN, NYC_LON_MAX = -74.26, -73.70
 
 RADII_M = [300, 400, 500]
-DEFAULT_RADIUS_M = 400
+DEFAULT_RADIUS_M = int(os.getenv("RADIUS_M", "400"))

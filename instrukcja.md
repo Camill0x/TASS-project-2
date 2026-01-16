@@ -543,4 +543,38 @@ python -m network.community_map
 Saved: plots/6-network/community_map.html
 ```
 
+### Analiza wieloskalowa sieci hotspotów (multiscale)
+
+Analiza stabilności struktury sieciowej hotspotów dla różnych promieni agregacji przestępczości.
+
+Skrypt:
+- porównuje globalne miary sieci (gęstość, liczba komponentów, LCC, clustering),
+- analizuje stabilność centralnych hotspotów (top PageRank) między skalami,
+- pozwala ocenić, czy wnioski sieciowe są odporne na wybór promienia przestrzennego.
+
+Tworzy:
+- `data/multiscale_summary.csv`
+- `data/multiscale_top_overlap.csv`
+
+```
+python -m network.multiscale_analysis
+
+```
+
+Przykład:
+
+```
+=== MULTISCALE SUMMARY (quick view) ===
+ radius_m  nodes  edges  density  connected_components  largest_component_nodes  avg_clustering
+      300 3097.0 1485.0 0.000310                1839.0                    294.0        0.000000
+      400 3097.0 4527.0 0.000944                1026.0                   1621.0        0.439508
+      500 3097.0 7891.0 0.001646                 752.0                   1986.0        0.549377
+
+Top-10 hotspot overlaps (Jaccard):
+ radius_a  radius_b  top10_jaccard  top10_intersection
+      300       400       0.176471                   3
+      300       500       0.176471                   3
+      400       500       0.428571                   6
+```
+
 ---
