@@ -18,9 +18,28 @@ def main() -> None:
     cent = pd.read_csv(DATA_DIR / "hotspot_centrality.csv")
     comm = pd.read_csv(DATA_DIR / "hotspot_communities.csv")
 
-    # Weź TOP_N hotspotów wg PageRank
-    top_nodes = cent.sort_values("pagerank", ascending=False)["hotspot"].head(TOP_N).tolist()
-    S = H.subgraph(top_nodes).copy()
+    lcc_nodes = max(nx.connected_components(H), key=len)
+    H_lcc = H.subgraph(lcc_nodes).copy()
+
+    # Weź TOP_N hotspotów wg PageRank, ale tylko z LCC
+    top_nodes = (
+        cent[cent["hotspot"].isin(H_lcc.nodes())]
+        .sort_values("pagerank", ascending=False)["hotspot"]
+        .head(TOP_N)
+        .tolist()
+    )
+
+    # ego-graph: top nodes + ich "1-hop" sąsiedzi
+    nodes_keep: set[str] = set(top_nodes)
+    for n in top_nodes:
+        nodes_keep.update(H_lcc.neighbors(n))
+
+    S = H_lcc.subgraph(nodes_keep).copy()
+
+    # usuwanie pojedynczych punktów
+    isolates = list(nx.isolates(S))
+    if isolates:
+        S.remove_nodes_from(isolates)
 
     # Layout
     pos = nx.spring_layout(S, seed=42, k=None)
@@ -35,8 +54,8 @@ def main() -> None:
 
     plt.figure(figsize=(12, 10))
     nx.draw_networkx_edges(S, pos, alpha=0.25, width=0.8)
-    nx.draw_networkx_nodes(S, pos, node_size=sizes, node_color=node_colors)
-    plt.title(f"Hotspot projection – top {TOP_N} nodes by PageRank (colored by community)")
+    nx.draw_networkx_nodes(S, pos, node_size=sizes, node_color=node_colors, cmap="tab20")
+    plt.title(f"Hotspot projection (LCC) - top {TOP_N} nodes by PageRank (colored by community)")
     plt.axis("off")
     out1 = out_dir / f"hotspot_projection_top{TOP_N}.png"
     plt.tight_layout()
