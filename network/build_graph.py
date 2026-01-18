@@ -22,7 +22,6 @@ def main() -> None:
 
     print(f"Listings: {len(airbnb)} | Hotspots: {len(hotspots)}")
 
-    # BallTree na hotspotach
     hotspot_rad = np.deg2rad(hotspots[["lat_cell", "lon_cell"]].to_numpy())
     tree = BallTree(hotspot_rad, metric="haversine")
     radius_rad = RADIUS_M / EARTH_RADIUS_M
@@ -32,7 +31,6 @@ def main() -> None:
 
     G = nx.Graph()
 
-    # Dodaj węzły
     for _, r in airbnb.iterrows():
         G.add_node(f"L_{r['id']}", node_type="listing", price=r["price"])
 
@@ -44,7 +42,6 @@ def main() -> None:
             felony=r["felony_crimes"],
         )
 
-    # Dodaj krawędzie
     for i, hs_idx in enumerate(neighbors):
         listing_id = f"L_{airbnb.iloc[i]['id']}"
         for h in hs_idx:

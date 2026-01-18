@@ -16,16 +16,15 @@ def main() -> None:
 
     print(f"Listings: {len(listings)}, Hotspots: {len(hotspots)}")
 
-    # Projekcja: hotspot–hotspot (waga = liczba wspólnych listingów)
+    # Projection onto hotspots
     H = nx.bipartite.weighted_projected_graph(G, hotspots)
     print(f"Hotspot projection: {H.number_of_nodes()} nodes, {H.number_of_edges()} edges")
 
-    # Zapis projekcji (przyda się do wizualizacji i community)
     proj_path = DATA_DIR / "hotspot_projection.graphml"
     nx.write_graphml(H, proj_path)
     print(f"Saved projection graph: {proj_path.relative_to(ROOT_DIR)}")
 
-    # Globalne metryki (na projekcji)
+    # Global metrics
     components = list(nx.connected_components(H))
     n_components = len(components)
     largest_cc = max(components, key=len) if components else set()
@@ -46,14 +45,14 @@ def main() -> None:
     print(f"Saved: {out_global.relative_to(ROOT_DIR)}")
     print(global_stats)
 
-    # Lokalne metryki (centralności)
+    # Centrality measures
     deg_cent = nx.degree_centrality(H)
     pr = nx.pagerank(H, weight="weight")
 
-    # Weighted degree (strength): suma wag krawędzi
+    # Weighted degree (strength)
     strength = dict(H.degree(weight="weight"))
 
-    # Betweenness liczymy na LCC (jest stabilniejsze i szybsze)
+    # Betweenness 
     bet = nx.betweenness_centrality(H_lcc, normalized=True, weight=None)
 
     rows = []

@@ -91,7 +91,7 @@ def main() -> None:
     if missing:
         raise ValueError(f"Missing columns: {missing}")
 
-    # --- hexbin: Airbnb vs NYPD (log–log density) ---
+    # hexbin: Airbnb vs NYPD (log–log density)
     save_hexbin_loglog(
         df,
         "airbnb_count",
@@ -101,7 +101,7 @@ def main() -> None:
         gridsize=55,
     )
 
-    # --- boxplot: NYPD counts by Airbnb density bins ---
+    # boxplot: NYPD counts by Airbnb density bins
     save_boxplot_by_bins(
         df,
         "airbnb_count",

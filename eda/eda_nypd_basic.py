@@ -32,7 +32,6 @@ def main() -> None:
         top = df["offense_description"].value_counts().head(30)
         print(top)
 
-        # opcjonalnie: zapisz do pliku, żeby było pod ręką w repo
         top.to_csv("plots/top30_offense_description.csv", header=["count"])
         print("Saved: plots/top30_offense_description.csv")
 

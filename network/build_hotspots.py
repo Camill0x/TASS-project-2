@@ -12,15 +12,15 @@ def main() -> None:
     print(f"Reading: {NYPD_CLEAN.relative_to(ROOT_DIR)}")
     df = pd.read_csv(NYPD_CLEAN)
 
-    # Dodaj grupy violent/property/other
+    # Add groups
     df = add_offense_group(df)
 
-    # Grid (zaokrąglanie współrzędnych)
+    # Grid
     df["lat_cell"] = (df["latitude"] / GRID_SIZE).round() * GRID_SIZE
     df["lon_cell"] = (df["longitude"] / GRID_SIZE).round() * GRID_SIZE
     df["hotspot_id"] = df["lat_cell"].astype(str) + "_" + df["lon_cell"].astype(str)
 
-    # Agregacja
+    # Aggregate
     hotspots = (
         df.groupby(["hotspot_id", "lat_cell", "lon_cell"])
         .agg(

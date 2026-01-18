@@ -6,7 +6,7 @@ import pandas as pd
 
 from config import DATA_DIR, PLOTS_DIR, ROOT_DIR
 
-TOP_N = 250  # sensowny rozmiar do rysowania
+TOP_N = 250
 
 
 def main() -> None:
@@ -21,7 +21,6 @@ def main() -> None:
     lcc_nodes = max(nx.connected_components(H), key=len)
     H_lcc = H.subgraph(lcc_nodes).copy()
 
-    # Weź TOP_N hotspotów wg PageRank, ale tylko z LCC
     top_nodes = (
         cent[cent["hotspot"].isin(H_lcc.nodes())]
         .sort_values("pagerank", ascending=False)["hotspot"]
@@ -29,26 +28,21 @@ def main() -> None:
         .tolist()
     )
 
-    # ego-graph: top nodes + ich "1-hop" sąsiedzi
     nodes_keep: set[str] = set(top_nodes)
     for n in top_nodes:
         nodes_keep.update(H_lcc.neighbors(n))
 
     S = H_lcc.subgraph(nodes_keep).copy()
 
-    # usuwanie pojedynczych punktów
     isolates = list(nx.isolates(S))
     if isolates:
         S.remove_nodes_from(isolates)
 
-    # Layout
     pos = nx.spring_layout(S, seed=42, k=None)
 
-    # Community colors (proste mapowanie na liczby)
     comm_map = dict(zip(comm["hotspot"], comm["community_id"]))
     node_colors = [comm_map.get(n, -1) for n in S.nodes()]
 
-    # Node sizes wg PageRank
     pr_map = dict(zip(cent["hotspot"], cent["pagerank"]))
     sizes = [20000 * pr_map.get(n, 0.0) + 20 for n in S.nodes()]
 
@@ -63,8 +57,6 @@ def main() -> None:
     plt.close()
     print(f"Saved: {out1.relative_to(ROOT_DIR)}")
 
-    # Druga wizualizacja: histogram wielkości community (na LCC)
-    # (dla raportu: pokazuje strukturę społeczności)
     comm_valid = comm[comm["community_id"] >= 0]
     counts = comm_valid["community_id"].value_counts().sort_values(ascending=False)
 

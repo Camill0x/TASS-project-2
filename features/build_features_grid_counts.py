@@ -17,7 +17,7 @@ def add_grid_cell(df: pd.DataFrame, cell_size_m: int, lat0: float, lon0: float) 
 
     lat0_rad = np.deg2rad(lat0)
 
-    # metry w układzie lokalnym (equirectangular)
+    # metres from origin
     y = np.deg2rad(lat - lat0) * EARTH_RADIUS_M
     x = np.deg2rad(lon - lon0) * EARTH_RADIUS_M * np.cos(lat0_rad)
 
@@ -31,11 +31,9 @@ def add_grid_cell(df: pd.DataFrame, cell_size_m: int, lat0: float, lon0: float) 
         .str.cat(pd.Series(x_bin, index=df.index).astype(str), sep="_")
     )
 
-    # --- NOWE: środek komórki w metrach (bin + 0.5) * cell_size_m
     y_center_m = (y_bin.astype(float) + 0.5) * float(cell_size_m)
     x_center_m = (x_bin.astype(float) + 0.5) * float(cell_size_m)
 
-    # --- NOWE: konwersja z powrotem na lat/lon
     lat_center = lat0 + np.rad2deg(y_center_m / EARTH_RADIUS_M)
     lon_center = lon0 + np.rad2deg(x_center_m / (EARTH_RADIUS_M * np.cos(lat0_rad)))
 

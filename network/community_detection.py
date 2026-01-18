@@ -12,7 +12,7 @@ def main() -> None:
     print(f"Reading projection graph: {proj_path.relative_to(ROOT_DIR)}")
     H = nx.read_graphml(proj_path)
 
-    # Dla stabilności róbmy community na największej składowej spójnej
+    # LCC ( Largest Connected Component )
     components = list(nx.connected_components(H))
     largest_cc = max(components, key=len) if components else set()
     H_lcc = H.subgraph(largest_cc).copy()
@@ -27,7 +27,7 @@ def main() -> None:
     mod = modularity(H_lcc, comms, weight="weight")
     print(f"Modularity (LCC): {mod:.4f}")
 
-    # Przypisz community_id dla hotspotów w LCC
+    # community assignment
     mapping = {}
     for i, c in enumerate(comms):
         for node in c:

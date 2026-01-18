@@ -59,7 +59,7 @@ def main() -> None:
     print(f"Saved: {out_csv.relative_to(ROOT_DIR)}")
     print(merged)
 
-    # Plot: listings vs crimes_total (2 separate bar charts for readability)
+    # Plot: listings vs crimes_total
     plt.figure(figsize=(8, 4))
     plt.bar(merged["borough"], merged["listings"])
     plt.title("Airbnb listings by borough")

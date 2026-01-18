@@ -166,14 +166,12 @@ def main() -> None:
     print(f"Reading: {path.relative_to(ROOT_DIR)}")
     df = pd.read_csv(path)
 
-    # --- modelling convenience / "standard mieszkania" ---
     df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
     df = df[df["price"].notna()]
     df = df[df["price"] >= 10]  # drop degenerate
-    df = df[df["price"] <= 1000]  # cut outliers for stats/models
+    df = df[df["price"] <= 1000]  # cut outliers 
     df["log_price"] = np.log1p(df["price"])
 
-    # --- radius-dependent columns ---
     R = int(DEFAULT_RADIUS_M)
     violent_col = f"violent_{R}m"
     fel_col = f"felonies_{R}m"
@@ -184,11 +182,11 @@ def main() -> None:
     if missing:
         raise ValueError(f"Missing columns: {missing}. Did you generate merged_features.csv with this radius?")
 
-    # --- zones (two definitions) ---
+    # zones
     df = add_crime_zone(df, violent_col, "crime_zone_violent")
     df = add_crime_zone(df, fel_col, "crime_zone_felony")
 
-    # --- save zone summaries (two CSVs) ---
+    # save zone summaries
     zs_v = zone_summary(df, "crime_zone_violent", violent_col, fel_col, tot_col)
     zs_f = zone_summary(df, "crime_zone_felony", violent_col, fel_col, tot_col)
 
@@ -202,7 +200,7 @@ def main() -> None:
     print(f"Saved: {out_f.relative_to(ROOT_DIR)}")
     print(zs_f)
 
-    # --- boxplots (violent zones) ---
+    # boxplots (violent zones)
     save_boxplot(
         df, "price", "crime_zone_violent", f"Price by violent-crime zone (R={R}m)", "boxplot_price_by_zone_violent.png"
     )
@@ -214,7 +212,7 @@ def main() -> None:
         "boxplot_logprice_by_zone_violent.png",
     )
 
-    # --- boxplots (felony zones) ---
+    # boxplots (felony zones)
     save_boxplot(
         df, "price", "crime_zone_felony", f"Price by felony-crime zone (R={R}m)", "boxplot_price_by_zone_felony.png"
     )
@@ -226,12 +224,12 @@ def main() -> None:
         "boxplot_logprice_by_zone_felony.png",
     )
 
-    # --- hexbin: price/log_price vs crimes ---
+    # hexbin: price/log_price vs crimes
     save_hexbin(df, tot_col, "log_price", f"log_price vs {tot_col}", f"hexbin_logprice_vs_{tot_col}.png")
     save_hexbin(df, violent_col, "log_price", f"log_price vs {violent_col}", f"hexbin_logprice_vs_{violent_col}.png")
     save_hexbin(df, fel_col, "log_price", f"log_price vs {fel_col}", f"hexbin_logprice_vs_{fel_col}.png")
 
-    # --- correlations table ---
+    # correlations table
     corr_cols = [
         "price",
         "log_price",
@@ -253,10 +251,10 @@ def main() -> None:
     corr.to_csv(corr_out)
     print(f"Saved: {corr_out.relative_to(ROOT_DIR)}")
 
-    # Correlation heatmap to PNG (raport-friendly)
+    # Correlation heatmap to PNG
     save_corr_heatmap(corr, f"Correlation heatmap (R={R}m)", f"corr_heatmap_{R}m.png")
 
-    # --- correlations by room_type (standard mieszkania) ---
+    # correlations by room_type
     if "room_type" in df.columns:
         room_corrs = []
         for rt, sub in df.groupby("room_type"):
@@ -269,11 +267,11 @@ def main() -> None:
         room_corr.to_csv(out_room, index=False)
         print(f"Saved: {out_room.relative_to(ROOT_DIR)}")
 
-    # --- zone x room_type summaries (two defs) ---
+    # zone x room_type summaries
     zone_room_summary(df, "crime_zone_violent", "violent", R)
     zone_room_summary(df, "crime_zone_felony", "felony", R)
 
-    # --- optional: mean log_price by zone & room_type (nice single chart for report) ---
+    # mean log_price by zone & room_type=
     plot_mean_by_zone_and_room(
         df,
         "crime_zone_violent",
@@ -289,7 +287,7 @@ def main() -> None:
         f"mean_logprice_by_zone_roomtype_felony_{R}m.png",
     )
 
-    # --- store modelling dataset used later (regression, network linkage) ---
+    # store modelling dataset used later
     model_out = DATA_DIR / f"merged_model_{R}m.csv"
     df.to_csv(model_out, index=False)
     print(f"Saved: {model_out.relative_to(ROOT_DIR)}")

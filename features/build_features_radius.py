@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import BallTree
 
-from config import AIRBNB_CLEAN, DATA_DIR, NYPD_CLEAN, ROOT_DIR
+from config import AIRBNB_CLEAN, DATA_DIR, NYPD_CLEAN, ROOT_DIR, RADII_M
 from features.crime_taxonomy import add_offense_group
 
 EARTH_RADIUS_M = 6371000.0
@@ -15,10 +15,6 @@ def to_radians(df: pd.DataFrame) -> np.ndarray:
 
 
 def counts_for_radius(airbnb: pd.DataFrame, nypd: pd.DataFrame, radius_m: float) -> pd.DataFrame:
-    """
-    Dla każdej oferty Airbnb liczy liczbę przestępstw w promieniu radius_m
-    + rozbicie na law_category oraz offense_group (violent/property/other).
-    """
     radius_rad = radius_m / EARTH_RADIUS_M
 
     airbnb_rad = to_radians(airbnb)
@@ -61,18 +57,14 @@ def main() -> None:
     print(f"Reading: {NYPD_CLEAN.relative_to(ROOT_DIR)}")
     nypd = pd.read_csv(NYPD_CLEAN)
 
-    # Normalizacja (bezpiecznie)
     nypd["law_category"] = nypd["law_category"].astype(str).str.upper().str.strip()
     nypd["offense_description"] = nypd["offense_description"].astype(str).str.upper().str.strip()
 
-    # Dodaj grupy violent/property/other
     nypd = add_offense_group(nypd)
 
-    # Liczymy dla 3 promieni (do porównania w raporcie)
-    radii = [300.0, 400.0, 500.0]
+    radii = RADII_M
     feats = [counts_for_radius(airbnb, nypd, r) for r in radii]
 
-    # Merge cech do jednego DF
     merged = airbnb.copy()
     for f in feats:
         merged = merged.merge(f, on="id", how="left")

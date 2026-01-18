@@ -10,20 +10,16 @@ def main() -> None:
     print(f"Reading: {AIRBNB_CLEAN.relative_to(ROOT_DIR)}")
     df = pd.read_csv(AIRBNB_CLEAN)
 
-    # --- Basic sanity ---
     if "price" not in df.columns:
         raise ValueError("Missing 'price' column in Airbnb data")
 
-    # Fill reviews_per_month for modelling convenience
     if "reviews_per_month" in df.columns:
         df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
 
-    # Optional: remove obviously invalid/degenerate prices
-    # (Kaggle dataset sometimes contains 0)
     df = df[df["price"].notna()]
     df = df[df["price"] >= 10]
 
-    # Cut extreme outliers for stats/models (keep clean dataset intact!)
+    # Cut extreme outliers
     df = df[df["price"] <= 1000]
 
     # log-price for regression

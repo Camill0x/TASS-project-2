@@ -10,9 +10,7 @@ nypd = pd.read_csv(NYPD_CLEAN)
 
 m = folium.Map(location=[40.73, -73.93], zoom_start=11, tiles="cartodbpositron")
 
-# Warstwa Airbnb
 heat_airbnb = HeatMap(airbnb[["latitude", "longitude"]], radius=7, blur=10, name="Airbnb")
-# Warstwa NYPD
 heat_nypd = HeatMap(
     nypd[["latitude", "longitude"]], radius=7, blur=10, name="NYPD", gradient={0.4: "blue", 0.65: "orange", 1: "red"}
 )

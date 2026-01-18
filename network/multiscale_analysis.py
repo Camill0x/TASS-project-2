@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import DATA_DIR, PLOTS_DIR, ROOT_DIR
+from config import DATA_DIR, PLOTS_DIR, RADII_M, ROOT_DIR
 
 
 @dataclass(frozen=True)
@@ -180,7 +180,7 @@ def summarize_runs(results: list[dict]) -> None:
 
 def main() -> None:
     # choose radii (meters) you want to compare
-    radii = [300, 400, 500]
+    radii = RADII_M
 
     # ensure base dirs exist
     (DATA_DIR / "multiscale").mkdir(parents=True, exist_ok=True)
@@ -205,8 +205,7 @@ def main() -> None:
         run_module("network.network_metrics", env)
         run_module("network.community_detection", env)
 
-        # Visuals are optional — include if you want them in the multiscale archive
-        # (they might take longer; comment out if needed)
+        # Visuals
         # run_module("network.visualize_graph", env)
         # run_module("network.community_map", env)
 

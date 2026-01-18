@@ -21,7 +21,6 @@ def main():
     airbnb = pd.read_csv(AIRBNB_CLEAN)
     nypd = pd.read_csv(NYPD_CLEAN)
 
-    # Zróbmy też violent (na bazie Waszej taksonomii)
     from features.crime_taxonomy import add_offense_group
 
     nypd2 = add_offense_group(nypd)
@@ -30,8 +29,8 @@ def main():
 
     m = folium.Map(location=[40.73, -73.93], zoom_start=11, tiles="cartodbpositron")
 
-    # Warstwy (ustaw show=True tylko na jedną, żeby startowo była widoczna)
-    # Airbnb – chłodny, neutralny
+    # Warstwy
+    # Airbnb
     add_heat_layer(
         m,
         airbnb,
@@ -46,7 +45,7 @@ def main():
         },
     )
 
-    # All crimes – klasyczny heat (żółty → czerwony)
+    # All crimes
     add_heat_layer(
         m,
         nypd,
@@ -62,7 +61,7 @@ def main():
         },
     )
 
-    # Felony – ciemna czerwień / bordo
+    # Felony
     add_heat_layer(
         m,
         felony,
@@ -77,7 +76,7 @@ def main():
         },
     )
 
-    # Violent – wysoki kontrast (szary → czarny → czerwony)
+    # Violent
     add_heat_layer(
         m,
         violent,
@@ -94,8 +93,7 @@ def main():
 
     # Layer control
     folium.LayerControl(collapsed=False).add_to(m)
-
-    # Prosta legenda (HTML)
+    # Legend
     legend_html = """
     <div style="
         position: fixed;

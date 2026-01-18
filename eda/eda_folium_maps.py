@@ -43,7 +43,7 @@ def main():
         "plots/4-1-folium/map_crimes_felony.html",
     )
 
-    # Violent (z taxonomy)
+    # Violent
     from features.crime_taxonomy import add_offense_group
 
     nypd = add_offense_group(nypd)

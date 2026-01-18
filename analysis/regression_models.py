@@ -22,7 +22,6 @@ def main() -> None:
     print(f"Reading: {path.relative_to(ROOT_DIR)}")
     df = pd.read_csv(path)
 
-    # Ensure categorical variables are treated correctly
     df["borough"] = df["neighbourhood_group"].astype("category")
     df["room_type"] = df["room_type"].astype("category")
 
@@ -30,12 +29,12 @@ def main() -> None:
     fel = f"felonies_{DEFAULT_RADIUS_M}m"
     vio = f"violent_{DEFAULT_RADIUS_M}m"
     tot = f"crimes_total_{DEFAULT_RADIUS_M}m"
-    # --- Model A: bazowy (z dokumentacji) ---
+    # Model A
     formula_a = f"log_price ~ {tot} + borough + room_type"
     res_a = run_model(formula_a, df, "Model_A_basic")
     results.append(res_a)
 
-    # --- Model B: rozszerzony (uwagi prowadzącego) ---
+    # Model B
     formula_b = f"log_price ~ {fel} + {vio} + number_of_reviews + availability_365 + borough + room_type"
     res_b = run_model(formula_b, df, "Model_B_extended")
     results.append(res_b)

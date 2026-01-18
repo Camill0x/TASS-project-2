@@ -56,7 +56,7 @@ def main() -> None:
         str(outdir / "felony_hexbin.png"),
     )
 
-    # 4) Violent (taxonomy-based) hexbin
+    # 4) Violent hexbin
     from features.crime_taxonomy import add_offense_group
 
     nypd = add_offense_group(nypd)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-# Minimalna taksonomia – można rozszerzać
+# Taxonomy of crime types
 VIOLENT = {
     "ROBBERY",
     "FELONY ASSAULT",
@@ -25,10 +25,6 @@ PROPERTY = {
 
 
 def add_offense_group(nypd: pd.DataFrame) -> pd.DataFrame:
-    """
-    Dodaje kolumnę offense_group: violent / property / other.
-    W oparciu o offense_description (OFNS_DESC).
-    """
     df = nypd.copy()
     desc = df["offense_description"].astype(str).str.upper()
 
