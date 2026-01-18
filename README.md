@@ -21,6 +21,7 @@ The goal is to build a unified dataset suitable for spatial analysis and further
 3. **Export the project root to `PYTHONPATH`:**
 
    From the root directory of the project:
+
    ```sh
    export PYTHONPATH=$(pwd)
    ```
@@ -47,20 +48,20 @@ python3 utils/clean_datasets.py
 
 The cleaned versions will be saved as:
 
-* `data/airbnb_clean.csv`
-* `data/nypd_clean.csv`
+- `data/airbnb_clean.csv`
+- `data/nypd_clean.csv`
 
 ## Prepare Airbnb data for modeling
 
 Filters Airbnb prices (10–1000 USD) and creates log-transformed prices:
 
 ```sh
-pytho3 features/make_model_ready.py
+python3 features/make_model_ready.py
 ```
 
 Generated file:
 
-* `data/airbnb_model.csv`
+- `data/airbnb_model.csv`
 
 ## Crime categories
 
@@ -73,17 +74,17 @@ python3 eda/eda_nypd_basic.py
 
 Generated file:
 
-* `plots/top30_offense_description.csv`
+- `plots/top30_offense_description.csv`
 
 Crime categories are mapped into three groups:
 
-* `violent`
-* `property`
-* `other`
+- `violent`
+- `property`
+- `other`
 
 The taxonomy definition is stored in:
 
-* `features/crime_taxonomy.py`
+- `features/crime_taxonomy.py`
 
 ## Spatial feature engineering
 
@@ -98,7 +99,7 @@ python3 features/build_features_radius.py
 
 Generated file:
 
-* `data/merged_features.csv`
+- `data/merged_features.csv`
 
 Features include crime counts within 300 m, 400 m, and 500 m radii.
 
@@ -112,7 +113,7 @@ python3 features/build_features_grid_counts.py
 
 Generated file:
 
-* `data/grid_counts_400m.csv`
+- `data/grid_counts_400m.csv`
 
 Each grid cell contains counts of Airbnb listings and crime categories.
 
@@ -123,15 +124,15 @@ Each grid cell contains counts of Airbnb listings and crime categories.
 Generates interactive maps for Airbnb listings and crime categories:
 
 ```sh
-python3 eda/eda_maps_by_category:
+python3 eda/eda_folium_maps.py:
 ```
 
 Generated files:
 
-* `plots/4-1-folium/map_airbnb.html`
-* `plots/4-1-folium/map_crimes_all.html`
-* `plots/4-1-folium/map_crimes_felony.html`
-* `plots/4-1-folium/map_crimes_violent.html`
+- `plots/4-1-folium/map_airbnb.html`
+- `plots/4-1-folium/map_crimes_all.html`
+- `plots/4-1-folium/map_crimes_felony.html`
+- `plots/4-1-folium/map_crimes_violent.html`
 
 To generate a combined interactive map with layer controls, run:
 
@@ -141,20 +142,34 @@ python3 eda/eda_all_layers_map.py
 
 Generated file:
 
-* `plots/4-1-folium/map_layers_airbnb_crime.html`
+- `plots/4-1-folium/map_layers_airbnb_crime.html`
 
 ### Density maps (hexbin)
 
-Static hexbin density maps for selected crime categories:
+Static hexbin density maps for Airbnb listings and crime categories:
 
 ```sh
-python3 eda/eda_hexbin_by_category.py
+python3 eda/eda_hexbin_maps.py
 ```
 
 Generated files:
 
-* `plots/4-2-hexbin/felony_hexbin.png`
-* `plots/4-2-hexbin/violent_hexbin.png`
+- `plots/4-2-hexbin/felony_hexbin.png`
+- `plots/4-2-hexbin/violent_hexbin.png`
+- `plots/4-2-hexbin/nypd_all_hexbin.png`
+- `plots/4-2-hexbin/airbnb_hexbin.png`
+
+### Grid maps
+
+Static grid density maps for Airbnb listings and crime categories:
+
+```sh
+python3 eda/eda_grid_maps.py
+```
+
+Generated files:
+
+- `grid_layers_400m.html`
 
 ## Statistical analysis
 
@@ -167,20 +182,20 @@ python3 analysis/statistical_analysis.py
 
 Airbnb listings are divided into terciles based on crime intensity:
 
-* `crime_zone_violent`
-* `crime_zone_felony`
+- `crime_zone_violent`
+- `crime_zone_felony`
 
 Generated summary tables:
 
-* `data/crime_zone_summary_violent.csv`
-* `data/crime_zone_summary_felony.csv`
+- `data/crime_zone_summary_violent.csv`
+- `data/crime_zone_summary_felony.csv`
 
 Additional outputs include:
 
-* correlation heatmaps
-* boxplots of price and log-price by crime zone
-* room-type–specific summaries
-* final modeling dataset
+- correlation heatmaps
+- boxplots of price and log-price by crime zone
+- room-type–specific summaries
+- final modeling dataset
 
 ### Borough-level aggregation
 
@@ -193,9 +208,9 @@ python3 analysis/borough_join.py
 
 Generated files:
 
-* `data/borough_join_summary.csv`
-* `plots/5-statistical/borough_airbnb_listings.png`
-* `plots/5-statistical/borough_crimes_total.png`
+- `data/borough_join_summary.csv`
+- `plots/5-statistical/borough_airbnb_listings.png`
+- `plots/5-statistical/borough_crimes_total.png`
 
 ### Grid-based statistical visualizations
 
@@ -208,15 +223,15 @@ python3 analysis/grid_count_visualizations.py
 
 Generated plots:
 
-* `hexbin_airbnb_vs_nypd_loglog_{R}m.png`
-* `boxplot_nypd_by_airbnb_bins_{R}m.png`
+- `hexbin_airbnb_vs_nypd_loglog_{R}m.png`
+- `boxplot_nypd_by_airbnb_bins_{R}m.png`
 
 ### Regression models
 
 Runs two regression models:
 
-* baseline model
-* extended model
+- baseline model
+- extended model
 
 Run:
 
@@ -226,7 +241,7 @@ python3 analysis/regression_models.py
 
 Generated file:
 
-* `data/regression_results.csv`
+- `data/regression_results.csv`
 
 ## Network analysis (SNA)
 
@@ -240,7 +255,7 @@ python3 network/build_hotspots.py
 
 Generated file:
 
-* `data/hotspots.csv`
+- `data/hotspots.csv`
 
 ### Bipartite Airbnb–hotspot graph
 
@@ -252,7 +267,7 @@ python3 network/build_graph.py
 
 Generated file:
 
-* `data/bipartite_airbnb_hotspot.graphml`
+- `data/bipartite_airbnb_hotspot.graphml`
 
 ### Network metrics
 
@@ -265,8 +280,8 @@ python3 network/network_metrics.py
 
 Generated files:
 
-* `data/hotspot_centrality.csv`
-* `data/network_global_stats.csv`
+- `data/hotspot_centrality.csv`
+- `data/network_global_stats.csv`
 
 ### Community detection
 
@@ -278,9 +293,9 @@ python3 network/community_detection.py
 
 Generated files:
 
-* `data/hotspot_projection.graphml`
-* `data/hotspot_communities.csv`
-* `data/community_stats.csv`
+- `data/hotspot_projection.graphml`
+- `data/hotspot_communities.csv`
+- `data/community_stats.csv`
 
 ### Network visualizations
 
@@ -293,9 +308,9 @@ python3 network/community_map.py
 
 Generated files:
 
-* `plots/6-network/hotspot_projection_top250.png`
-* `plots/6-network/community_sizes.png`
-* `plots/6-network/community_map.html`
+- `plots/6-network/hotspot_projection_top250.png`
+- `plots/6-network/community_sizes.png`
+- `plots/6-network/community_map.html`
 
 ### Multiscale network analysis
 
@@ -308,5 +323,5 @@ python3 network/multiscale_analysis.py
 
 Generated files:
 
-* `data/multiscale_summary.csv`
-* `data/multiscale_top_overlap.csv`
+- `data/multiscale_summary.csv`
+- `data/multiscale_top_overlap.csv`

@@ -17,6 +17,7 @@ def add_grid_cell(df: pd.DataFrame, cell_size_m: int, lat0: float, lon0: float) 
 
     lat0_rad = np.deg2rad(lat0)
 
+    # metry w układzie lokalnym (equirectangular)
     y = np.deg2rad(lat - lat0) * EARTH_RADIUS_M
     x = np.deg2rad(lon - lon0) * EARTH_RADIUS_M * np.cos(lat0_rad)
 
@@ -25,9 +26,24 @@ def add_grid_cell(df: pd.DataFrame, cell_size_m: int, lat0: float, lon0: float) 
 
     df["cell_y_bin"] = y_bin
     df["cell_x_bin"] = x_bin
-    df["cell_id"] = y_bin.astype(str) + "_" + x_bin.astype(str)
+    df["cell_id"] = (
+        pd.Series(y_bin, index=df.index).astype(str)
+        .str.cat(pd.Series(x_bin, index=df.index).astype(str), sep="_")
+    )
+
+    # --- NOWE: środek komórki w metrach (bin + 0.5) * cell_size_m
+    y_center_m = (y_bin.astype(float) + 0.5) * float(cell_size_m)
+    x_center_m = (x_bin.astype(float) + 0.5) * float(cell_size_m)
+
+    # --- NOWE: konwersja z powrotem na lat/lon
+    lat_center = lat0 + np.rad2deg(y_center_m / EARTH_RADIUS_M)
+    lon_center = lon0 + np.rad2deg(x_center_m / (EARTH_RADIUS_M * np.cos(lat0_rad)))
+
+    df["cell_lat_center"] = lat_center
+    df["cell_lon_center"] = lon_center
 
     return df
+
 
 
 def make_grid_counts(airbnb: pd.DataFrame, nypd: pd.DataFrame, cell_size_m: int) -> pd.DataFrame:
@@ -59,8 +75,21 @@ def make_grid_counts(airbnb: pd.DataFrame, nypd: pd.DataFrame, cell_size_m: int)
         out = out.merge(grp, on="cell_id", how="left")
 
     out = out.fillna(0)
-
-    count_cols = [c for c in out.columns if c != "cell_id"]
+    centers = (
+        pd.concat(
+            [
+                a[["cell_id", "cell_lat_center", "cell_lon_center"]],
+                c[["cell_id", "cell_lat_center", "cell_lon_center"]],
+            ],
+            ignore_index=True,
+        )
+        .drop_duplicates(subset=["cell_id"])
+    )
+    out = out.merge(centers, on="cell_id", how="left")
+    count_cols = [
+        c for c in out.columns
+        if c not in ("cell_id", "cell_lat_center", "cell_lon_center")
+    ]
     out[count_cols] = out[count_cols].astype(np.int64)
 
     return out
