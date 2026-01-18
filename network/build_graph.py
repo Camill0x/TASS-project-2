@@ -12,7 +12,7 @@ RADIUS_M = float(DEFAULT_RADIUS_M)
 EARTH_RADIUS_M = 6371000.0
 
 
-def to_rad(df):
+def to_rad(df: pd.DataFrame) -> np.ndarray:
     return np.deg2rad(df[["latitude", "longitude"]].to_numpy())
 
 

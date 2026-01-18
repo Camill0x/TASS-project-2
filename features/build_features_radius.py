@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from crime_taxonomy import add_offense_group
 from sklearn.neighbors import BallTree
 
-from config import AIRBNB_CLEAN, DATA_DIR, NYPD_CLEAN, ROOT_DIR, RADII_M
-from features.crime_taxonomy import add_offense_group
+from config import AIRBNB_CLEAN, DATA_DIR, NYPD_CLEAN, RADII_M, ROOT_DIR
 
 EARTH_RADIUS_M = 6371000.0
 

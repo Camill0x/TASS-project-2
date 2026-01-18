@@ -1,4 +1,5 @@
 import math
+
 import folium
 import pandas as pd
 
@@ -11,7 +12,7 @@ def radius_from_count(v: int) -> float:
     return 2.0 + 3.0 * math.log10(v + 1)
 
 
-def add_layer(m: folium.Map, df: pd.DataFrame, col: str, name: str, color: str):
+def add_layer(m: folium.Map, df: pd.DataFrame, col: str, name: str, color: str) -> None:
     fg = folium.FeatureGroup(name=name, show=False)
     for _, r in df.iterrows():
         v = int(r[col])
@@ -29,7 +30,7 @@ def add_layer(m: folium.Map, df: pd.DataFrame, col: str, name: str, color: str):
     fg.add_to(m)
 
 
-def main():
+def main() -> None:
     outdir = PLOTS_DIR / "4-3-grid"
     outdir.mkdir(parents=True, exist_ok=True)
 

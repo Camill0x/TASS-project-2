@@ -12,7 +12,7 @@ def add_crime_zone(df: pd.DataFrame, col: str, out_col: str) -> pd.DataFrame:
     df = df.copy()
     q1, q2 = df[col].quantile([0.33, 0.66]).tolist()
 
-    def zone(x):
+    def zone(x: float) -> str:
         if x <= q1:
             return "low"
         if x <= q2:
@@ -69,8 +69,8 @@ def corr_table(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
 def save_corr_heatmap(corr: pd.DataFrame, title: str, filename: str) -> None:
     plt.figure(figsize=(10, 8))
     plt.imshow(corr.values)
-    plt.xticks(range(len(corr.columns)), corr.columns, rotation=90)
-    plt.yticks(range(len(corr.index)), corr.index)
+    plt.xticks(range(len(corr.columns)), list(corr.columns), rotation=90)
+    plt.yticks(range(len(corr.index)), list(corr.index))
     plt.title(title)
     plt.colorbar()
     plt.tight_layout()
@@ -169,7 +169,7 @@ def main() -> None:
     df["reviews_per_month"] = df["reviews_per_month"].fillna(0)
     df = df[df["price"].notna()]
     df = df[df["price"] >= 10]  # drop degenerate
-    df = df[df["price"] <= 1000]  # cut outliers 
+    df = df[df["price"] <= 1000]  # cut outliers
     df["log_price"] = np.log1p(df["price"])
 
     R = int(DEFAULT_RADIUS_M)

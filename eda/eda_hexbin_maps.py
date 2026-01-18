@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from config import AIRBNB_CLEAN, NYPD_CLEAN, PLOTS_DIR
+from features.crime_taxonomy import add_offense_group
 
 
 def ensure_outdir() -> None:
@@ -37,14 +38,14 @@ def main() -> None:
     # 1) Airbnb hexbin
     save_hexbin(
         airbnb,
-        "Airbnb listings – hexbin density",
+        "Airbnb listings - hexbin density",
         str(outdir / "airbnb_hexbin.png"),
     )
 
     # 2) ALL NYPD hexbin
     save_hexbin(
         nypd,
-        "NYPD complaints (all categories) – hexbin density",
+        "NYPD complaints (all categories) - hexbin density",
         str(outdir / "nypd_all_hexbin.png"),
     )
 
@@ -52,18 +53,16 @@ def main() -> None:
     felony = nypd[nypd["law_category"] == "FELONY"]
     save_hexbin(
         felony,
-        "NYPD Felony – hexbin density",
+        "NYPD Felony - hexbin density",
         str(outdir / "felony_hexbin.png"),
     )
 
     # 4) Violent hexbin
-    from features.crime_taxonomy import add_offense_group
-
     nypd = add_offense_group(nypd)
     violent = nypd[nypd["offense_group"] == "violent"]
     save_hexbin(
         violent,
-        "NYPD Violent-impact group – hexbin density",
+        "NYPD Violent-impact group - hexbin density",
         str(outdir / "violent_hexbin.png"),
     )
 

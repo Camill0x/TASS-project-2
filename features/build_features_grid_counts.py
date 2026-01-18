@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from crime_taxonomy import add_offense_group
 
 from config import AIRBNB_CLEAN, DATA_DIR, DEFAULT_RADIUS_M, NYPD_CLEAN, ROOT_DIR
-from features.crime_taxonomy import add_offense_group
 
 EARTH_RADIUS_M = 6371000.0
 
@@ -27,8 +27,7 @@ def add_grid_cell(df: pd.DataFrame, cell_size_m: int, lat0: float, lon0: float) 
     df["cell_y_bin"] = y_bin
     df["cell_x_bin"] = x_bin
     df["cell_id"] = (
-        pd.Series(y_bin, index=df.index).astype(str)
-        .str.cat(pd.Series(x_bin, index=df.index).astype(str), sep="_")
+        pd.Series(y_bin, index=df.index).astype(str).str.cat(pd.Series(x_bin, index=df.index).astype(str), sep="_")
     )
 
     y_center_m = (y_bin.astype(float) + 0.5) * float(cell_size_m)
@@ -41,7 +40,6 @@ def add_grid_cell(df: pd.DataFrame, cell_size_m: int, lat0: float, lon0: float) 
     df["cell_lon_center"] = lon_center
 
     return df
-
 
 
 def make_grid_counts(airbnb: pd.DataFrame, nypd: pd.DataFrame, cell_size_m: int) -> pd.DataFrame:
@@ -73,21 +71,15 @@ def make_grid_counts(airbnb: pd.DataFrame, nypd: pd.DataFrame, cell_size_m: int)
         out = out.merge(grp, on="cell_id", how="left")
 
     out = out.fillna(0)
-    centers = (
-        pd.concat(
-            [
-                a[["cell_id", "cell_lat_center", "cell_lon_center"]],
-                c[["cell_id", "cell_lat_center", "cell_lon_center"]],
-            ],
-            ignore_index=True,
-        )
-        .drop_duplicates(subset=["cell_id"])
-    )
+    centers = pd.concat(
+        [
+            a[["cell_id", "cell_lat_center", "cell_lon_center"]],
+            c[["cell_id", "cell_lat_center", "cell_lon_center"]],
+        ],
+        ignore_index=True,
+    ).drop_duplicates(subset=["cell_id"])
     out = out.merge(centers, on="cell_id", how="left")
-    count_cols = [
-        c for c in out.columns
-        if c not in ("cell_id", "cell_lat_center", "cell_lon_center")
-    ]
+    count_cols = [c for c in out.columns if c not in ("cell_id", "cell_lat_center", "cell_lon_center")]
     out[count_cols] = out[count_cols].astype(np.int64)
 
     return out

@@ -3,7 +3,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from config import AIRBNB_CLEAN, NYPD_CLEAN
+from config import NYPD_CLEAN
 
 df = pd.read_csv(NYPD_CLEAN)
 
@@ -18,7 +18,7 @@ hb = ax.hexbin(
     cmap="magma",
 )
 ctx.add_basemap(ax, source=ctx.providers.CartoDB.Positron)
-plt.colorbar(hb, label="log10(count)")
+plt.colorbar(hb, label="log(count)")
 ax.set_title("NYPD Complaints - gęstość na mapie")
 plt.tight_layout()
 plt.show()

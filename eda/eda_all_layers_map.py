@@ -6,7 +6,14 @@ from folium.plugins import HeatMap
 from config import AIRBNB_CLEAN, NYPD_CLEAN
 
 
-def add_heat_layer(m, df, name, radius=7, blur=10, gradient=None):
+def add_heat_layer(
+    m: folium.Map,
+    df: pd.DataFrame,
+    name: str,
+    radius: int = 7,
+    blur: int = 10,
+    gradient: dict[float, str] | None = None,
+) -> None:
     fg = FeatureGroup(name=name, show=False)
     HeatMap(
         df[["latitude", "longitude"]].values.tolist(),
@@ -17,7 +24,7 @@ def add_heat_layer(m, df, name, radius=7, blur=10, gradient=None):
     fg.add_to(m)
 
 
-def main():
+def main() -> None:
     airbnb = pd.read_csv(AIRBNB_CLEAN)
     nypd = pd.read_csv(NYPD_CLEAN)
 

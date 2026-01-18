@@ -3,16 +3,17 @@ import pandas as pd
 from folium.plugins import HeatMap
 
 from config import AIRBNB_CLEAN, NYPD_CLEAN
+from features.crime_taxonomy import add_offense_group
 
 
-def save_map(points, center, name, output):
+def save_map(points: list[list[float]], center: list[float], name: str, output: str) -> None:
     m = folium.Map(location=center, zoom_start=11, tiles="cartodbpositron")
     HeatMap(points, radius=7, blur=10).add_to(m)
     m.save(output)
     print(f"Saved map: {output}")
 
 
-def main():
+def main() -> None:
     airbnb = pd.read_csv(AIRBNB_CLEAN)
     nypd = pd.read_csv(NYPD_CLEAN)
 
@@ -44,8 +45,6 @@ def main():
     )
 
     # Violent
-    from features.crime_taxonomy import add_offense_group
-
     nypd = add_offense_group(nypd)
     violent = nypd[nypd["offense_group"] == "violent"]
 

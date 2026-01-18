@@ -52,7 +52,7 @@ def main() -> None:
     # Weighted degree (strength)
     strength = dict(H.degree(weight="weight"))
 
-    # Betweenness 
+    # Betweenness
     bet = nx.betweenness_centrality(H_lcc, normalized=True, weight=None)
 
     rows = []

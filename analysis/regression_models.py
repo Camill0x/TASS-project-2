@@ -29,6 +29,7 @@ def main() -> None:
     fel = f"felonies_{DEFAULT_RADIUS_M}m"
     vio = f"violent_{DEFAULT_RADIUS_M}m"
     tot = f"crimes_total_{DEFAULT_RADIUS_M}m"
+
     # Model A
     formula_a = f"log_price ~ {tot} + borough + room_type"
     res_a = run_model(formula_a, df, "Model_A_basic")
